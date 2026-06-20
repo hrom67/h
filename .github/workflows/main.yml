@@ -1,1 +1,1002 @@
-gh repo clone jpxue/Overwatch-Aim-Assist
+
+*/
+
+
+define ADS        = XB1_LT;     define Fire      = XB1_RT;
+define Shift      = XB1_LB;     define E_Ability = XB1_RB; // Shift = LB Ability (Kiriko Tele) , E_Ability = RB Ability (Kiriko Suzu)
+define Ultimate   = XB1_Y;      define Reload    = XB1_X;
+define Crouch     = XB1_B;      define Jump      = XB1_A;
+define Swtich_W   = XB1_LEFT;   define Hero_Mod  = XB1_DOWN;
+define Scoreboard = XB1_VIEW;   define Pause     = XB1_MENU;
+define Ping       = XB1_RIGHT;  
+
+// DO NOT TOUCH //
+
+define RY  = XB1_RY;          define RX   = XB1_RX;
+define LY  = XB1_LY;          define LX   = XB1_LX;
+define PY  = POLAR_RY;        define PX   = POLAR_RX;
+define PRS = POLAR_RS;        define PLS  = POLAR_LS;
+define Previous   = XB1_LEFT; define Next = XB1_RIGHT;
+define Select     = XB1_A;    define Back = XB1_B;
+define Close      = XB1_XBOX; 
+
+
+
+
+
+
+const string ModLabels    [] = { "Anti Recoil", "Sin Assist",  "LS AA", "Sin Tracker","Custom Sens", "Misc. Mods", "Deadzone", "VM-Speed" };
+// discord.gg/orla
+const string ModDesc      [] = { "On Fire",     "Hip & ADS", "Hip & ADS",    "",       "A/X to Edit","A/X to Edit",         "" };
+const string MiscModsDesc [] = {      "",             "",       "After Fire",    "On Fire",     "On Fire",     "On Fire" };
+const string Status       [] = { "Off", "On"};
+const string Save_Message [] = { "Saving...", "SAVED" };
+const string Game_Title   [] = { "Created by @kiwiko" };
+const string Version      [] = { "Alpha 1.04" };
+const string EditLabels   [] = {
+"Vertical", "Horizontal", // Anti Recoil;
+"Radius", "Strength", "ADS Radius", "ADS Strngth",
+"Assist Type", "LS Radius", "LS Strngth",
+"Assist Type","Radial DZ",  "Strength", "Speed",
+"Hip Sens", "ADS Sens", "Fire Sens", "ADS & Fire Sens",
+"H. Triggers", "Ping On Fire", "Auto Reload", "Auto Strafe", "Crouch Spam"
+};
+const string MiscEditLabels [] = {
+"Hip Sens", "ADS Sens", "Fire Sens", "ADS & Fire Sens"
+}
+const string Tracking_Types [] = {          
+"Basic", "Sin v1"
+};
+const string LS_Types [] = {
+"Rotational", "Linear"
+};
+const string Anti_Recoil_Types [] = { "Off", "Soldier 76", "Cassidy", "Baptiste" };
+const string Sin_Assist_Types  [] = { "Off", "v1", "v2" };
+
+const int16 ModEditLimits [][] = {
+{0, 100, 1, 50}, // Vertical
+{-50, 50, 1, 50}, // Horizontal
+
+{0, 100, 1, 50}, // Radius
+{0, 150, 1, 50}, // Strength
+{0, 100, 1, 50}, // ADS Radius
+{0, 150, 1, 50}, // ADS Strength
+// discord.gg/orla
+
+{0, 1, 1, 100},  // LS Type
+{0, 100, 1, 50}, // LS Radius
+{0, 2000, 1, 50},// LS Speed;
+
+{0, 1,   1, 100}, // Type;
+{0, 100, 1, 25}, // Radial DZ
+{0, 250, 1, 50}, // strength
+{0, 2000, 1, 50}, // speed
+
+{0, 100, 1, 50}, // Hip Sens
+{0, 100, 1, 50}, // ADS Sens
+{0, 100, 1, 50},  // Fire Sens
+{0, 100, 1, 50}, // ADS & Fire Sens
+
+{0, 1,   1, 50},
+{0, 1,   1, 50},
+{0, 1,   1, 50},
+{0, 1,   1, 50},
+{0, 1,   1, 50}
+}
+
+const int8 ModLimits [][] = {
+{TRUE, Vertical,         Horizontal,       Horizontal,       Horizontal,                   Horizontal,                      0, 3}, // Anti Recoil
+{TRUE, Sin_Radius,       Sin_Strength,     ADS_Radius,       ADS_Strength,                 ADS_Strength,                    0, 2}, // Sin AA
+{TRUE, LS_Type,          LS_Radius, 	   LS_Strength,      LS_Strength,                  LS_Strength,                     0, 1}, // LS AA
+{TRUE, Tracker_Type,     Radial_DZ,        Tracker_Strength, Tracker_Speed,                Tracker_Speed,                   0, 1}, // Sin Tracker
+{TRUE, Custom_Hip_Sens,  Custom_ADS_Sens,  Custom_Fire_Sens, Custom_Fire_Sens,             Custom_ADSFire_Sens,             0, 1},
+{TRUE, Hair_Triggers,    Ping_On_Fire,     Auto_Reload,      Auto_Strafe,                  Crouch_Spam,                     1, 1},   // Misc Mods
+{FALSE,0,                0,                0,                0,                            0,                               0, 100}, // Deadzone
+{FALSE,0,                0,                0,                0,                            0,                              -9,0}    // VM Speed
+}
+const int8 miscLimits [][] = {
+{FALSE, 0,               0,                0,                0,                            0,                           	0, 1},
+// discord.gg/orla
+{FALSE, 0,               0,                0,                0,                            0,                            	0, 1},
+{FALSE, 0,               0,                0,                0,                            0,                            	0, 1},
+{FALSE, 0,               0,                0,                0,                            0,                            	0, 1},
+{FALSE, 0,               0,                0,                0,                            0,                            	0, 1}
+}
+
+const int16 pollarArr[] =
+{ 23170,  23167,  23156,  23139,  23114,  23082,  23044,  22998,  22945,  22885,  22818,  22745,  22664,  22577,  22482,  22381,  22273,  22158,  22036,  21908,  21773,  21632,  21483,  21329,  21167,  21000,  20825,  20645,  20458,  20265,  20066,  19861,  19650,  19432,  19209,  18980,  18745,  18505,  18259,  18007,  17750,  17487,  17219,  16946,  16667,  16384,  16096,  15802,  15504,  15201,  14894,  14582,  14265,  13944,  13619,  13290,  12957,  12620,  12278,  11934,  11585,  11233,  10878,  10519,  10157,  9792,  9424,  9053,  8680,  8304,  7925,  7544,  7160,  6774,  6387,  5997,  5605,  5212,  4817,  4421,  4024,  3625,  3225,  2824,  2422,  2019,  1616,  1213,  809,  404,  00,  -404,  -809,  -1213,  -1616,  -2019,  -2422,  -2824,  -3225,  -3625,  -4024,  -4421,  -4817,  -5212,  -5605,  -5997,  -6387,  -6774,  -7160,  -7544,  -7925,  -8304,  -8680,  -9053,  -9424,  -9792,  -10157,  -10519,  -10878,  -11233,  -11585,  -11934,  -12278,  -12620,  -12957,  -13290,  -13619,  -13944,  -14265,  -14582,  -14894,  -15201,  -15504,  -15802,  -16096,  -16384,  -16667,  -16946,  -17219,  -17487,  -17750,  -18007,  -18259,  -18505,  -18745,  -18980,  -19209,  -19432,  -19650,  -19861,  -20066,  -20265,  -20458,  -20645,  -20825,  -21000,  -21167,  -21329,  -21483,  -21632,  -21773,  -21908,  -22036,  -22158,  -22273,  -22381,  -22482,  -22577,  -22664,  -22745,  -22818,  -22885,  -22945,  -22998,  -23044,  -23082,  -23114,  -23139,  -23156,  -23167,  -23170,  -23167,  -23156,  -23139,  -23114,  -23082,  -23044,  -22998,  -22945,  -22885,  -22818,  -22745,  -22664,  -22577,  -22482,  -22381,  -22273,  -22158,  -22036,  -21908,  -21773,  -21632,  -21483,  -21329,  -21167,  -21000,  -20825,  -20645,  -20458,  -20265,  -20066,  -19861,  -19650,  -19432,  -19209,  -18980,  -18745,  -18505,  -18259,  -18007,  -17750,  -17487,  -17219,  -16946,  -16667,  -16384,  -16096,  -15802,  -15504,  -15201,  -14894,  -14582,  -14265,  -13944,  -13619,  -13290,  -12957,  -12620,  -12278,  -11934,  -11585,  -11233,  -10878,  -10519,  -10157,  -9792,  -9424,  -9053,  -8680,  -8304,  -7925,  -7544,  -7160,  -6774,  -6387,  -5997,  -5605,  -5212,  -4817,  -4421,  -4024,  -3625,  -3225,  -2824,  -2422,  -2019,  -1616,  -1213,  -809,  -404,  00,  404,  809,  1213,  1616,  2019,  2422,  2824,  3225,  3625,  4024,  4421,  4817,  5212,  5605,  5997,  6387,  6774,  7160,  7544,  7925,  8304,  8680,  9053,  9424,  9792,  10157,  10519,  10878,  11233,  11585,  11934,  12278,  12620,  12957,  13290,  13619,  13944,  14265,  14582,  14894,  15201,  15504,  15802,  16096,  16384,  16667,  16946,  17219,  17487,  17750,  18007,  18259,  18505,  18745,  18980,  19209,  19432,  19650,  19861,  20066,  20265,  20458,  20645,  20825,  21000,  21167,  21329,  21483,  21632,  21773,  21908,  22036,  22158,  22273,  22381,  22482,  22577,  22664,  22745,  22818,  22885,  22945,  22998,  23044,  23082,  23114,  23139,  23156,  23167,  23170 };
+
+enum /* Mods */ { 
+	Anti_Recoil,
+	Sin_AA,
+	LS_AA,
+	Sin_Tracker,
+	Custom_Sensitivity,
+	Misc_Mods,
+	Deadzone,
+	VM_Speed,
+	Last
+}
+	
+enum /* Variables */ {
+	Vertical,
+	Horizontal,
+	
+	Sin_Radius,
+	Sin_Strength,
+	ADS_Radius,
+	ADS_Strength,
+	
+	
+	LS_Type,
+	LS_Radius,
+	LS_Strength,
+// discord.gg/orla
+	
+	Tracker_Type,
+	Radial_DZ,
+	Tracker_Strength,
+	Tracker_Speed,
+	
+	Custom_Hip_Sens,
+	Custom_ADS_Sens,
+	Custom_Fire_Sens,
+	Custom_ADSFire_Sens,
+	
+	Hair_Triggers,
+	Ping_On_Fire,
+	Auto_Reload,
+	Auto_Strafe,
+	Crouch_Spam,
+	
+	vLast
+}
+
+enum /* Print Vars */ {
+Right = -3,
+Center,
+Left,
+String,
+Value
+}
+
+                                 // |
+int display = TRUE;              // |
+int menu;                        // |
+int mod_idx;                     // |  
+int mod_edit_idx;                // |
+int mod_toggle[Last];            // |
+// discord.gg/orla
+int mod_edit[21];                // |
+                                 // |
+                                 // |
+                                 // |
+
+
+int Sin_Angle;
+int LS_Angle;
+
+int v2Speed, v2Angle, Polar_Stick, CurrentX, CurrentY, v2Radius, v2RadiusR, aiAngle, cosAngle, sinAngle;
+int Direction = 1;
+int v2_Assist = 1;
+int set_Radius = 50;
+
+int CSens;
+
+const int16 LED_Colours [][] = {
+{255, 0, 0},
+{0, 255, 0},
+{0, 0, 255},
+{150, 150, 0},
+{0, 150, 150},
+{20, 190, 10},
+{255, 150, 100},
+{50, 1, 255},
+{255, 1, 255},
+{80, 190, 10},
+{0, 0, 0} // Last Mod in IDX keep all other colours before this.
+}
+
+
+
+
+
+// discord.gg/orla
+
+init {
+
+	Load_Data();
+
+	
+	}
+	
+main {
+
+	set_val(TRACE_1, menu);
+	set_val(TRACE_2, mod_idx);
+	set_val(TRACE_3, mod_edit_idx);
+	set_val(TRACE_4, mod_edit[Sin_Strength])
+	
+	vm_tctrl(mod_toggle[VM_Speed]);
+	
+	set_hsb(308, 100, 100);
+	
+	if(isqrt(pow(get_ival(POLAR_RY), 2) + pow(get_ival(POLAR_RX), 2)) <= convert(mod_toggle[Deadzone])){
+		set_val(POLAR_RX, 0);
+		set_val(POLAR_RY, 0);
+	}
+	
+	ScreenSaver();
+	
+	switch(menu) {
+		case 0: {
+		
+			if(get_ival(XB1_LT)) {
+				set_val(Pause, 0);
+				if(event_press(Pause)) {
+					display = TRUE;
+// discord.gg/orla
+					menu = 1;
+					combo_run(Menu_Open);
+					}
+				}
+			if(mod_toggle[Anti_Recoil] == 1) {
+				Soldier_AR();
+				
+				} else if (mod_toggle[Anti_Recoil] == 2) {
+					if(get_val(ADS)) {
+						SinAR();
+						}
+					} else if (mod_toggle[Anti_Recoil] == 3) {
+						if(get_ival(Fire) && !get_val(ADS)) {
+						combo_run(Baptiste_AR);
+						}
+					}
+			if(mod_toggle[Sin_AA] == 1) {
+				if(!get_ival(ADS)) {
+				if(abs(get_ival(RY)) < mod_edit[Sin_Radius] && abs(get_ival(RX)) < mod_edit[Sin_Radius]) {
+					set_polar(PRS, Sin_Angle = (Sin_Angle + mod_edit[Sin_Strength]) % 360, (mod_edit[Sin_Radius] * 328));
+					} else { if(mod_toggle[Sin_Tracker] && mod_edit[Tracker_Type] == 0) combo_run(Basic_Tracker) }
+				}
+			}
+			if(mod_toggle[Sin_AA] == 1) {
+				if(!get_ival(ADS)) {
+				if(abs(get_ival(RY)) < mod_edit[Sin_Radius] && abs(get_ival(RX)) < mod_edit[Sin_Radius]) {
+					set_polar(PRS, Sin_Angle = (Sin_Angle + mod_edit[Sin_Strength]) % 360, (mod_edit[Sin_Radius] * 328));
+					} else { if(mod_toggle[Sin_Tracker] && mod_edit[Tracker_Type] == 1) combo_run(Sin_Tracker) }
+				}
+			}
+		if(mod_toggle[Sin_AA] == 1) {
+				if(get_ival(ADS)) {
+				if(abs(get_ival(RY)) < mod_edit[ADS_Radius] && abs(get_ival(RX)) < mod_edit[ADS_Radius]) {
+					set_polar(PRS, Sin_Angle = (Sin_Angle + mod_edit[ADS_Strength]) % 360, (mod_edit[ADS_Radius] * 328) + get_polar(PRS, 0));
+// discord.gg/orla
+					} else { if(mod_toggle[Sin_Tracker] && mod_edit[Tracker_Type] == 0) combo_run(Basic_Tracker) }
+				}
+			} if (mod_toggle[Sin_AA] == 1) {
+				if(get_ival(ADS)) {
+				if(abs(get_ival(RY)) < mod_edit[ADS_Radius] && abs(get_ival(RX)) < mod_edit[ADS_Radius]) {
+				set_polar(PRS, Sin_Angle = (Sin_Angle + mod_edit[ADS_Strength]) % 360, (mod_edit[ADS_Radius] * 328) + get_polar(PRS, 0));
+					} else { if(mod_toggle[Sin_Tracker] && mod_edit[Tracker_Type] == 1) combo_run(Sin_Tracker) }
+				}
+			} 
+			
+			if(mod_toggle[Sin_AA] == 2) {
+				if(!get_ival(ADS)) {
+					Sin_Assist_v2();
+				} else if(get_ival(ADS)) Sin_Assist_v2_ADS();
+			}
+			if(mod_toggle[LS_AA] && get_val(ADS) || !get_val(ADS)) {
+			if(mod_toggle[LS_AA] && mod_edit[LS_Type] == 0) {
+				if(abs(get_val(LY)) < mod_edit[LS_Radius] && abs(get_val(LX)) < mod_edit[LS_Radius]) {
+					set_polar(POLAR_LS, LS_Angle = (LS_Angle + mod_edit[LS_Strength]) % 360, (mod_edit[LS_Radius] * 328) + get_polar(POLAR_LS, 0));
+							}
+						}
+			if(mod_toggle[LS_AA] && mod_edit[LS_Type] == 1) {
+				if(abs(get_ival(LY)) < mod_edit[LS_Radius] && abs(get_val(LX)) < mod_edit[LS_Radius]) {
+					combo_run(LS_Linear);
+						}
+					}
+				}
+			if(mod_toggle[Misc_Mods]) {
+				if(mod_edit[Hair_Triggers] == 1) {
+					deadzone(ADS, Fire, 100, 100);
+					}
+				if(mod_edit[Crouch_Spam] == 1) {
+					if(get_ival(Fire)) {
+						combo_run(Crouch_Spam);
+// discord.gg/orla
+						}
+					}
+				if(mod_edit[Auto_Strafe] == 1) {
+					if(get_ival(Fire)) {
+						combo_run(Auto_Strafe);
+						}
+					}
+				if(mod_edit[Ping_On_Fire] == 1) {
+					if(get_ival(Fire)){
+						combo_run(Ping_On_Fire);
+						}
+					}
+				if(mod_edit[Auto_Reload] == 1) {
+					if(event_release(Fire)){
+						combo_run(Auto_Reload);
+						}
+					}
+				}
+			if(mod_toggle[Custom_Sensitivity]) {
+				
+			if(!get_ival(ADS) && !get_ival(Fire)) {
+				CSens = mod_edit[Custom_Hip_Sens];
+			} else if(get_ival(ADS) && !get_ival(Fire)) {
+				CSens = mod_edit[Custom_ADS_Sens];
+			} else if(!get_ival(ADS) && get_ival(Fire)) {
+				CSens = mod_edit[Custom_Fire_Sens];
+			} else if(get_ival(ADS) && get_ival(Fire)) {
+				CSens = mod_edit[Custom_ADSFire_Sens];
+			}
+			sensitivity(XB1_RY, NOT_USE, CSens);
+			sensitivity(XB1_RX, NOT_USE, CSens);
+			}
+		break;
+		}
+// discord.gg/orla
+		case 1: {
+			block_all_inputs();
+			mod_idx = MinMax(mod_idx, 0, Last - 1, Previous, Next);
+			mod_toggle[mod_idx] = MinMax(mod_toggle[mod_idx], ModLimits[mod_idx][6], ModLimits[mod_idx][7], XB1_DOWN, XB1_UP);
+			set_rgb(LED_Colours[mod_idx][0], LED_Colours[mod_idx][1], LED_Colours[mod_idx][2]);
+			if(event_press(Select) && ModLimits[mod_idx][0]) {
+				mod_edit_idx = ModLimits[mod_idx][1];
+				menu = 2;
+				display = TRUE;
+				}
+			if(event_release(Close)) {
+				menu = 0;
+				display = TRUE;
+				Save_Data();
+				combo_run(Save_Message);
+				}
+			break;
+			}
+		case 2:{
+			block_all_inputs();
+			mod_edit_idx = MinMax(mod_edit_idx,ModLimits[mod_idx][1],ModLimits[mod_idx][5],PS4_UP,PS4_DOWN)
+			mod_edit[mod_edit_idx] = edit_val(mod_edit[mod_edit_idx],ModEditLimits[mod_edit_idx][2],ModEditLimits[mod_edit_idx][0],ModEditLimits[mod_edit_idx][1],PS4_LEFT,PS4_RIGHT,ModEditLimits[mod_edit_idx][3])
+			if(event_press(PS4_CIRCLE)){
+				menu = 1;
+				display = TRUE;
+				}
+			break;
+				
+			}
+		}
+	
+	if(display) {
+		cls_oled(0);
+		switch(menu) {
+// discord.gg/orla
+			case 0: {
+				image_oled(0, 0, TRUE, TRUE, Logo[0]);
+				Print(Game_Title[0], Center, 38, OLED_FONT_SMALL, OLED_WHITE, String);
+				Print(Version[0], Center, 50, OLED_FONT_SMALL, OLED_WHITE, String);
+				break;
+				}
+			case 1: {
+				line_oled(0, 16, 127, 16, 1, 1);
+				line_oled(112, 0, 112, 16, 1, 1);
+				line_oled(17, 0, 17, 16, 1, 1);
+				rect_oled(0, 0, OLED_WIDTH, OLED_HEIGHT, OLED_BLACK, OLED_WHITE);
+				DrawArrow();
+				Print(ModLabels[mod_idx], Center, 5, OLED_FONT_SMALL, OLED_WHITE, String);	
+				Print(ModDesc[mod_idx], Center, 50, OLED_FONT_SMALL, OLED_WHITE, String);
+				Print(mod_idx + 1, Right, 5, OLED_FONT_SMALL, OLED_WHITE, Value)
+				if(mod_idx == VM_Speed && mod_idx != Deadzone){
+					LeftArrow();
+					Print(mod_toggle[mod_idx] + 10, Center, 29, OLED_FONT_SMALL, OLED_WHITE, Value);
+				}
+				else if ( mod_idx == Deadzone){
+					Print(mod_toggle[mod_idx], Center, 29, OLED_FONT_SMALL, OLED_WHITE, Value);
+				}
+				else if ( mod_idx == Anti_Recoil ) {
+					RightArrow();
+					Print(ModLabels[mod_idx], Center, 5, OLED_FONT_SMALL, OLED_WHITE, String);	
+					Print(Anti_Recoil_Types[mod_toggle[mod_idx]],Center,29,OLED_FONT_SMALL,OLED_WHITE,String)
+				    Print(ModDesc[mod_idx], Center, 50, OLED_FONT_SMALL, OLED_WHITE, String);
+					}
+				else if ( mod_idx == Sin_AA ) {
+					DrawArrow();
+					Print(ModLabels[mod_idx], Center, 5, OLED_FONT_SMALL, OLED_WHITE, String);	
+					Print(Sin_Assist_Types[mod_toggle[mod_idx]], Center, 29, OLED_FONT_SMALL, OLED_WHITE, String);
+					Print(ModDesc[mod_idx], Center, 50, OLED_FONT_SMALL, OLED_WHITE, String);
+					}
+// discord.gg/orla
+				else if ( mod_idx == Misc_Mods ) {
+					DrawArrow();
+					Print(ModLabels[mod_idx], Center, 5, OLED_FONT_SMALL, OLED_WHITE, String);	
+					Print(ModDesc[mod_idx], Center, 50, OLED_FONT_SMALL, OLED_WHITE, String);
+				}
+				else {
+					Print(Status[mod_toggle[mod_idx]],Center,29,OLED_FONT_SMALL,OLED_WHITE,String)
+					}
+				break;
+				}
+			case 2: {
+				line_oled(0, 16, 127, 16, 1, 1);
+				line_oled(112, 0, 112, 16, 1, 1);
+				line_oled(17, 0, 17, 16, 1, 1);
+				rect_oled(0, 0, OLED_WIDTH, OLED_HEIGHT, OLED_BLACK, OLED_WHITE);
+				Print(EditLabels[mod_edit_idx],Center,5,OLED_FONT_SMALL,OLED_WHITE,String)
+				Print(mod_edit[mod_edit_idx],Center,29,OLED_FONT_MEDIUM,OLED_WHITE,Value)
+				Print(ModEditLimits[mod_edit_idx][0], Left + 6, 22, OLED_FONT_SMALL, OLED_WHITE, Value);
+				Print(ModEditLimits[mod_edit_idx][1], Right, 22, OLED_FONT_SMALL, OLED_WHITE, Value);
+				if(mod_idx == LS_AA && mod_edit_idx == LS_Type) {
+					Clear();
+					line_oled(0, 16, 127, 16, 1, 1);
+					line_oled(112, 0, 112, 16, 1, 1);
+					line_oled(17, 0, 17, 16, 1, 1);
+					rect_oled(0, 0, OLED_WIDTH, OLED_HEIGHT, OLED_BLACK, OLED_WHITE);
+					Print(EditLabels[mod_edit_idx], Center, 5, OLED_FONT_SMALL, OLED_WHITE, String);
+					Print(LS_Types[mod_edit[mod_edit_idx]], Center, 29, OLED_FONT_MEDIUM, OLED_WHITE, String);
+					}
+				if(mod_idx == Sin_Tracker && mod_edit_idx == Tracker_Type) {
+					Clear();
+					line_oled(0, 16, 127, 16, 1, 1);
+					line_oled(112, 0, 112, 16, 1, 1);
+					line_oled(17, 0, 17, 16, 1, 1);
+					rect_oled(0, 0, OLED_WIDTH, OLED_HEIGHT, OLED_BLACK, OLED_WHITE);
+// discord.gg/orla
+					Print(EditLabels[mod_edit_idx], Center, 5, OLED_FONT_SMALL, OLED_WHITE, String);
+					Print(Tracking_Types[mod_edit[mod_edit_idx]], Center, 29, OLED_FONT_MEDIUM, OLED_WHITE, String);
+					}
+				if(mod_idx == Custom_Sensitivity && mod_edit_idx == Custom_ADSFire_Sens) {
+					Clear();
+					rect_oled(0, 0, OLED_WIDTH, OLED_HEIGHT, OLED_BLACK, OLED_WHITE);
+					line_oled(120, 0, 120, 16, 1, 1);
+					line_oled(7, 0, 7, 16, 1, 1);
+					line_oled(0, 16, 127, 16, 1, 1);
+					Print(ModEditLimits[mod_edit_idx][0], Left + 6, 22, OLED_FONT_SMALL, OLED_WHITE, Value);
+					Print(ModEditLimits[mod_edit_idx][1], Right, 22, OLED_FONT_SMALL, OLED_WHITE, Value);
+					Print(EditLabels[mod_edit_idx],Center,5,OLED_FONT_SMALL,OLED_WHITE,String)
+					Print(mod_edit[mod_edit_idx],Center,29,OLED_FONT_MEDIUM,OLED_WHITE,Value)
+					}
+				if(mod_idx == Misc_Mods && mod_edit_idx == Hair_Triggers || mod_edit_idx == Crouch_Spam|| mod_edit_idx == Auto_Reload || mod_edit_idx == Auto_Strafe || mod_edit_idx == Ping_On_Fire){
+					Print(EditLabels[mod_edit_idx],Center,5,OLED_FONT_SMALL,OLED_WHITE,String)
+					Print(Status[mod_edit[mod_edit_idx]], Center, 29, OLED_FONT_MEDIUM, OLED_WHITE, String);
+					Print(Status[0], Left + 6, 22, OLED_FONT_SMALL, OLED_WHITE, String);
+					Print(Status[1], Right, 22, OLED_FONT_SMALL, OLED_WHITE, String);
+					
+					}
+					
+				break;
+				}
+			}
+		display = FALSE;
+		}
+	}
+			
+				
+
+combo Basic_Tracker {
+	offset_ival(RY, mod_edit[Tracker_Strength] / 2);
+	offset_ival(RX, mod_edit[Tracker_Strength] / 2);
+// discord.gg/orla
+	wait(mod_edit[Tracker_Speed]);
+	offset_ival(RY, (mod_edit[Tracker_Strength] / 2) * -1);
+	offset_ival(RX, (mod_edit[Tracker_Strength] / 2) * -1);
+	wait(mod_edit[Tracker_Speed]);
+	}
+	
+combo Sin_Tracker{
+	set_val(XB1_RY, SinTracker(mod_edit[Tracker_Strength], XB1_RX, XB1_RY));
+	wait(mod_edit[Tracker_Speed]);
+	set_val(XB1_RY, SinTracker(inv(mod_edit[Tracker_Strength]), XB1_RX, XB1_RY));
+	wait(mod_edit[Tracker_Speed]);
+	}	
+
+combo LS_Linear {
+	set_val(XB1_LY, SmartTracker((mod_edit[LS_Radius]), 1, XB1_LX, XB1_LY));
+	wait(mod_edit[LS_Strength]);
+	set_val(XB1_LY, SmartTracker(inv(mod_edit[LS_Radius]), 1, XB1_LX, XB1_LY));
+	wait(mod_edit[LS_Strength]);
+	}
+
+combo Dynamic_RF {
+	set_val(Fire, 100);
+	wait(30);
+	set_val(Fire, 0);
+	wait(30);
+	}
+combo Auto_Reload {
+	wait(100);
+	set_val(Reload, 100);
+	wait(100);
+	set_val(Reload, 0);
+	}
+combo Crouch_Spam {
+	set_val(Crouch, 100);
+// discord.gg/orla
+	wait(50);
+	set_val(Crouch, 0);
+	wait(30);
+	}
+combo Auto_Strafe {
+	set_val(LX, get_ival(LX) + 30);
+	wait(200);
+	set_val(LX, get_ival(LX) + inv(30));
+	wait(200);
+	}
+combo Ping_On_Fire {
+wait(130);
+set_val(Ping, 100);
+wait(70);
+set_val(Ping, 0);
+}
+	
+combo Save_Message {
+	cls_oled(0);
+	Print(Save_Message[0], Center, 25, OLED_FONT_MEDIUM, OLED_WHITE, String);
+	wait(random(300, 500));
+	cls_oled(0);
+	Print(Save_Message[1], Center, 25, OLED_FONT_MEDIUM, OLED_WHITE, String);
+	wait(random(300, 800));
+	display = TRUE;
+	menu = 0;
+	}
+combo Menu_Open {
+	wait(150);
+	set_hsb(308, 100, 0);
+	wait(150);
+	set_hsb(308, 100, 100);
+	wait(150);
+	set_hsb(308, 100, 0);
+// discord.gg/orla
+	wait(150);
+	set_hsb(308, 100, 100);
+	wait(150);
+	set_hsb(308, 100, 0);
+	wait(150);
+	set_hsb(308, 100, 100);
+	}
+		
+
+
+
+
+
+
+
+
+
+
+function Sin_Assist_v2() {
+    if (v2_Assist) {
+        if (!get_ival(ADS) || get_ival(Fire)) {
+          v2Speed = (v2Speed + v2Angle + mod_edit[Sin_Strength] * Direction) % 360;
+            if (abs(get_val(RX)) <= mod_edit[Sin_Radius] && abs(get_val(RY)) <= mod_edit[Sin_Radius]) {
+                if (get_val(Fire)) {
+                    v2Angle = mod_edit[Sin_Strength] * Direction;
+                } else {
+                    v2Angle = mod_edit[Sin_Strength] * Direction;
+                }
+                set_polar(PRS, v2Speed, (mod_edit[Sin_Radius] * 328) + get_polar(PRS, 0));
+            }
+        }
+    } else {
+        if (abs(get_val(RX)) < mod_edit[Sin_Radius] && abs(get_val(RY)) < mod_edit[Sin_Radius]) {
+            set_val(PRS, 0);
+// discord.gg/orla
+        } else {
+            if (get_val(RX) >= mod_edit[Sin_Radius]) {
+                set_val(PRS, 45);
+            } else if (get_val(RX) <= -mod_edit[Sin_Radius]) {
+                set_val(PRS, 90);
+            } else if (get_val(RY) >= mod_edit[Sin_Radius]) {
+                set_val(PRS, 0);
+            } else if (get_val(RY) <= -mod_edit[Sin_Radius]) {
+                set_val(PRS, 90);
+            }
+        }
+    }
+        CurrentX = get_val(PX);
+        CurrentY = get_val(PY);
+        Polar_Stick = getPolar(PRS, POLAR_RADIUS);
+        v2RadiusR = (mod_edit[Sin_Radius] * 32767 / 100);
+        if (get_val(Fire) || !get_val(ADS)) {
+            if (Polar_Stick >= (32767 / 100)) {
+                aiAngle -= 301; 
+
+                if (get_val(Fire) || !get_val(ADS)) {
+                    v2Radius = ((v2RadiusR >> 1) * (32767 - isqrt(pow(abs(get_val(PX)), 2) + pow(abs(get_val(PY)), 2))) + (v2RadiusR << 1)) / 32767;
+                } else {
+                    v2Radius = ((v2RadiusR >> 1 + (set_Radius * 32767 / 1000) >> 1) * (32767 - isqrt(pow(abs(get_val(PX)), 2) + pow(abs(get_val(PY)), 2))) + v2RadiusR) / 32767;
+                }
+            }
+        } else {
+            set_val(PX, clamp(CurrentX + cosAngle, -32767, 32767));
+            set_val(PY, clamp(CurrentY + sinAngle, -32767, 32767));
+        }
+        if (get_val(Fire) || !get_val(ADS)) {
+            cosAngle = ((cos(aiAngle) * v2Radius) / (32767));
+            sinAngle = ((sin(aiAngle) * v2Radius) / (32767));
+        } else {
+// discord.gg/orla
+            cosAngle = ((cos(aiAngle) * v2Radius) / (32767 * mod_edit[Sin_Strength]));
+            sinAngle = ((sin(aiAngle) * v2Radius) / (32767 * mod_edit[Sin_Strength]));
+        }
+        set_val(PX, clamp(CurrentX + cosAngle, -32767, 32767));
+        set_val(PY, clamp(CurrentY + sinAngle, -32767, 32767));
+    }
+function Sin_Assist_v2_ADS() {
+    if (v2_Assist) {
+        if (get_ival(ADS)) {
+          v2Speed = (v2Speed + v2Angle + mod_edit[ADS_Strength] * Direction) % 360;
+            if (abs(get_val(RX)) <= mod_edit[ADS_Radius] && abs(get_val(RY)) <= mod_edit[ADS_Radius]) {
+                if (get_val(Fire)) {
+                    v2Angle = mod_edit[ADS_Strength] * Direction;
+                } else {
+                    v2Angle = mod_edit[ADS_Strength] * Direction;
+                }
+                set_polar(PRS, v2Speed, (mod_edit[ADS_Radius] * 328) + get_polar(PRS, 0));
+            }
+        }
+    } else {
+        if (abs(get_val(RX)) < mod_edit[ADS_Radius] && abs(get_val(RY)) < mod_edit[ADS_Radius]) {
+            set_val(PRS, 0);
+        } else {
+            if (get_val(RX) >= mod_edit[ADS_Radius]) {
+                set_val(PRS, 45);
+            } else if (get_val(RX) <= -mod_edit[ADS_Radius]) {
+                set_val(PRS, 90);
+            } else if (get_val(RY) >= mod_edit[ADS_Radius]) {
+                set_val(PRS, 0);
+            } else if (get_val(RY) <= -mod_edit[ADS_Radius]) {
+                set_val(PRS, 90);
+            }
+        }
+    }
+// discord.gg/orla
+        CurrentX = get_val(PX);
+        CurrentY = get_val(PY);
+        Polar_Stick = getPolar(PRS, POLAR_RADIUS);
+        v2RadiusR = (mod_edit[ADS_Radius] * 32767 / 100);
+        if (get_val(ADS)) {
+            if (Polar_Stick >= (32767 / 100)) {
+                aiAngle -= 301; 
+
+                if (get_val(ADS)) {
+                    v2Radius = ((v2RadiusR >> 1) * (32767 - isqrt(pow(abs(get_val(PX)), 2) + pow(abs(get_val(PY)), 2))) + (v2RadiusR << 1)) / 32767;
+                } else {
+                    v2Radius = ((v2RadiusR >> 1 + (set_Radius * 32767 / 1000) >> 1) * (32767 - isqrt(pow(abs(get_val(PX)), 2) + pow(abs(get_val(PY)), 2))) + v2RadiusR) / 32767;
+                }
+            }
+        } else {
+            set_val(PX, clamp(CurrentX + cosAngle, -32767, 32767));
+            set_val(PY, clamp(CurrentY + sinAngle, -32767, 32767));
+        }
+        if (get_val(ADS)) {
+            cosAngle = ((cos(aiAngle) * v2Radius) / (32767));
+            sinAngle = ((sin(aiAngle) * v2Radius) / (32767));
+        } else {
+            cosAngle = ((cos(aiAngle) * v2Radius) / (32767 * mod_edit[ADS_Strength]));
+            sinAngle = ((sin(aiAngle) * v2Radius) / (32767 * mod_edit[ADS_Strength]));
+        }
+        set_val(PX, clamp(CurrentX + cosAngle, -32767, 32767));
+        set_val(PY, clamp(CurrentY + sinAngle, -32767, 32767));
+    }    
+function Soldier_AR(){	
+	if(get_ival(Fire) && get_ptime(Fire) > 205) {
+		set_val(RY, SmartTracker(mod_edit[Vertical], 0, RX, RY));
+		}
+	}
+function SinAR(){	
+// discord.gg/orla
+		set_val(RY, SmartSens((mod_edit[Vertical]), RY));
+		set_val(RX, SmartSens((mod_edit[Horizontal]), RX));
+    	}
+combo Baptiste_AR() {
+	set_val(RY, SmartSens((mod_edit[Vertical]), RY));
+	set_val(RX, SmartSens((mod_edit[Horizontal]), RX));
+	wait(245);
+	set_val(RY, SmartSens(convert(0), RY));
+	set_val(RX, SmartSens(convert(0), RX));
+	wait(350);
+}
+					
+function offset_ival(Input,Output) {
+      set_val(Input,clamp(Output * (100 - abs(get_val(Input))) / 100 + get_val(Input),-100,100));
+      return; 
+}
+	
+int SmartSens;	
+	
+function SmartSens(f_val, f_axis) { 
+
+    SmartSens = ( (f_val * ( 32767 - abs( get_val(f_axis) ) ) ) / 32767); 
+
+    return clamp(get_val(f_axis) + SmartSens, -32768, 32767);
+}
+
+int x_input,y_input,x_adjustment,y_adjustment,Val;
+function SmartTracker(f_val, f_deadzone, f_axis_X, f_axis_Y) {
+	x_input = get_ival(f_axis_X);
+	y_input = get_ival(f_axis_Y);
+	
+	if(abs((x_input)) > f_deadzone || abs((y_input)) > f_deadzone) {
+		x_adjustment = 100 - pow(isqrt(x_input), 2);
+    	y_adjustment = 100 - pow(isqrt(y_input), 2);
+// discord.gg/orla
+    } 
+	
+	Val = f_val - (get_ival(f_axis_Y)) * (x_adjustment * y_adjustment) / 9000;
+	return clamp(y_input + Val, -32768, 32767);
+	
+	}
+int sinx,siny,sinyadj,sinxadj,sinval;
+function SinTracker(f_val, f_axis_X, f_axis_Y) {
+	sinx = get_ival(f_axis_X);
+	siny = get_ival(f_axis_Y);
+	
+	if(get_ival(ADS) && get_ival(Fire)) {
+		sinx = get_val(f_axis_X);
+		siny = get_val(f_axis_Y);
+		}
+	
+	if(abs((sinx)) > mod_edit[Radial_DZ] || abs((siny)) > mod_edit[Radial_DZ]) {
+		sinxadj = 100 - abs(sinx);
+    	sinyadj = 100 - abs(siny);
+    } 
+	
+	sinval = f_val * (sinxadj * sinyadj) / 32767;
+	return clamp(siny + sinval, -32768, 32767);
+	
+	}
+
+function convert (f_val){
+    return (f_val * 32767) / 100
+}
+	
+function MinMax (f_val,f_min,f_max,f_bmin,f_bmax){
+	if(event_press(f_bmin)){
+		f_val = max(f_min,f_val--);
+// discord.gg/orla
+		display = TRUE;
+	}
+	if(event_press(f_bmax)){
+		f_val = min(f_max,f_val++);
+		display = TRUE;
+	}
+	return f_val
+}
+
+function edit_val(f_val,f_inc,f_min,f_max,f_bdec,f_binc,f_time){
+	if(press_hold(f_bdec,f_time)){
+		f_val = cycle( f_val - f_inc,f_min,f_max)		
+		display = TRUE;
+	}
+	if(press_hold(f_binc,f_time)){
+		f_val = cycle( f_val + f_inc,f_min,f_max)
+		display = TRUE;
+	}
+	return f_val;
+}
+
+function press_hold(f_button,f_time){
+    if(get_ival(f_button) && get_ptime(f_button) > 500){
+        if((get_ptime(f_button)%(f_time + get_rtime())) >= f_time){
+            return TRUE        
+        }    
+    }
+    return event_press(f_button)
+}
+
+function cycle(f_val, f_lo, f_hi) {
+	if(f_val > f_hi) return f_lo;
+	if(f_val < f_lo) return f_hi;
+	return f_val;
+// discord.gg/orla
+}
+
+function sin(angle){
+  		return lerp_16(pollarArr[(correctAngle(angle - 1))], pollarArr[(correctAngle(angle + 1))], 0x8000);
+  	return 0;
+}
+function cos(angle){
+    	return lerp_16(pollarArr[((correctAngle(angle - 1) + 90) % 360)],  pollarArr[((correctAngle(angle + 1) + 90) % 360)], 0x8000);
+    return 0;
+}
+
+function lerp_16(a, b, t) { return fix_to_int(lerp(int_to_fix(a), int_to_fix(b), t)); }
+function int_to_fix(a) { return a * 0x10000; }
+function fix_to_int(a) { if (a >= 0) return (a + 0x10000 >> 1) / 0x10000; return (a - 0x10000 >> 1) / 0x10000; }
+function fix_mul(v1, v2) { return ((v1 >> 8) * (v2 >> 8)); }
+function lerp(a, b, f) { return fix_mul((0x10000 - f), a) + fix_mul(f, b); }
+function correctAngle(angle){
+  if (angle < 0) angle = 360 + (angle % 360);
+  angle = (angle + 90) % 360;
+  return angle;
+}
+function getPolar(Stick, AngleOrRadius) {
+  if (AngleOrRadius) return get_polar(Stick, POLAR_ANGLE);
+  return isqrt((get_val(Stick + 42) * get_val(Stick + 42)) + (get_val(Stick + 43) * get_val(Stick + 43)));   
+}
+	
+	
+
+int n,i;
+int forIndex = 1;
+int LINE_BOTTOM = 45;
+
+function Clear() {
+	cls_oled(0)
+// discord.gg/orla
+	}
+
+function Print (f_string,f_x,f_y,f_font,f_color,f_type){// By Jbaze122
+    if(!f_type){
+        print(x_location(get_string_length(f_string),f_font,f_x),f_y,f_font,f_color,f_string)
+    }
+    else{
+        if(f_string < 0){putc_oled(1,45);}
+        if(f_string){
+	        for(n = find_digits(f_string) + i = (f_string < 0 ),f_string = abs(f_string); f_string > 0; n-- , i++){  
+	            putc_oled(n,f_string%10 + 48);
+	            f_string = f_string/10;
+	        }
+        }
+        else{
+        	putc_oled(1,48); i = 1
+        }
+        puts_oled(x_location(i,f_font,f_x),f_y,f_font,i ,f_color);
+    }
+}
+
+int stringLength,byteValue,loopCount;
+function get_string_length(offset) {
+    stringLength = 0;
+    byteValue = duint8(offset);
+    loopCount = 0;
+    
+    while (byteValue != 0 && loopCount < 100) { // Adding loopCount limit to avoid infinite loops
+        stringLength++;
+        loopCount++;
+        byteValue = duint8(offset + loopCount);
+    }
+    
+    return stringLength;
+// discord.gg/orla
+}
+
+
+function x_location(f_chars,f_font,f_x) {  // By Jbaze122
+    if(f_x == -3){ return 128 - ((f_chars * (7 + (f_font > 1) + f_font * 4)) + 3 );}
+    if(f_x == -2){ return 64  - ((f_chars * (7 + (f_font > 1) + f_font * 4)) / 2 );}    
+    if(f_x == -1){ return 3 }
+    return f_x;     
+}
+
+function find_digits(f_num) {
+    for(n = 1; n < 11;n++){
+        if(!(abs(f_num) / pow(10,n))){
+               return n; 
+               break;
+          }
+    }
+    return 1;
+}
+
+function DrawArrow(){
+	ClearScroll(LINE_BOTTOM);
+	putc_oled(1, 133);
+	puts_oled(10, LINE_BOTTOM, OLED_FONT_MEDIUM, OLED_FONT_MEDIUM_WIDTH,1);
+	
+	putc_oled(1, 134);
+	puts_oled(111,LINE_BOTTOM, OLED_FONT_MEDIUM, OLED_FONT_MEDIUM_WIDTH,1);
+}
+
+function LeftArrow() {
+	ClearScroll(LINE_BOTTOM);
+	putc_oled(1, 133);
+	puts_oled(10, LINE_BOTTOM, OLED_FONT_MEDIUM, OLED_FONT_MEDIUM_WIDTH, 1);
+
+// discord.gg/orla
+}
+function RightArrow() {
+	ClearScroll(LINE_BOTTOM);
+	putc_oled(1, 134);
+	puts_oled(111,LINE_BOTTOM, OLED_FONT_MEDIUM, OLED_FONT_MEDIUM_WIDTH,1);
+
+	}
+function ClearScroll(scrollLine){
+	for (forIndex = 0; forIndex < 127; forIndex++) {		 
+		PrintCharacter(32, forIndex, scrollLine);
+	}
+}
+function PrintCharacter(character, column, scrollLine){
+	if(column > 0 && column < 127){
+		putc_oled(1,character);
+		puts_oled(column, scrollLine, 1, 1, 1);
+	}
+}	
+	
+int ss;
+function ScreenSaver() {
+	switch(menu) {
+		case 0: {
+			if(!(ss % 32768)) cls_oled(0);
+			if(!(ss++ % 100)) pixel_oled(random(0,127), ss % 64, random(-1,1));
+			break;
+			}
+		case 1: {
+			break;
+			}
+		case 2: {
+			break;
+			}
+		}
+// discord.gg/orla
+	}
+	
+	
+function Load_Data(){
+	if(!get_pvar(SPVAR_1,0,1,0)){// default values if you dont want them to be 0 when you load the script
+		
+		mod_toggle[Anti_Recoil] = 0;
+		mod_toggle[Sin_AA]      = 0;
+		mod_toggle[Sin_Tracker] = 0;
+		mod_toggle[Custom_Sensitivity] = 0;
+		mod_toggle[Misc_Mods]   = 1;
+		mod_toggle[Deadzone]    = 0;
+		mod_toggle[VM_Speed]    = 0;
+		
+		mod_edit[Vertical]      = 0;
+		mod_edit[Horizontal]    = 0;
+		
+		mod_edit[Sin_Radius]    = 0;
+		mod_edit[Sin_Strength]  = 0;
+		mod_edit[ADS_Radius]    = 0;
+		mod_edit[ADS_Strength]  = 0;
+		
+		mod_edit[LS_Type]       = 0;
+		mod_edit[LS_Radius]     = 0;
+		mod_edit[LS_Strength]   = 0;
+		
+		mod_edit[Tracker_Type]  = 0;
+		mod_edit[Tracker_Strength] = 0;
+		mod_edit[Radial_DZ]        = 0;
+		mod_edit[Tracker_Speed]    = 0;
+		
+		mod_edit[Custom_Hip_Sens]  = 0;
+		mod_edit[Custom_ADS_Sens]  = 0;
+		mod_edit[Custom_Fire_Sens] = 0;
+// discord.gg/orla
+		mod_edit[Custom_ADSFire_Sens] = 0;
+		
+
+		
+		set_pvar(SPVAR_1,1)
+		Save_Data()
+	}
+	for(i = 0 ; i < vLast; i++){
+		mod_edit[i] = get_pvar(SPVAR_2 + i,ModEditLimits[i][0],ModEditLimits[i][1],0);
+	}
+	for(i = 0 ; i < Last; i++){
+		mod_toggle[i] = get_pvar(SPVAR_2 + vLast + i,ModLimits[i][6],ModLimits[i][7],0);
+	}
+}
+
+function Save_Data(){
+	for(i = 0 ; i < vLast; i ++){
+		set_pvar(SPVAR_2 + i,mod_edit[i] );
+	}
+	for(i = 0 ; i < Last; i ++){
+		set_pvar(SPVAR_2 + i + vLast ,mod_toggle[i] );
+	}
+}
+int ii;
+
+
+
+
+const image Logo = {118, 21, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x07, 0xFF, 0x87, 0x20, 0x01, 0xC3, 0xFF, 0xF3, 0xFF, 0xE0, 0x3F, 0xFC, 0xF0, 0x0F, 0x00, 0x3F, 0xFF, 0x1C, 0xC0, 0x07, 0x3F, 0xFF, 0xCF, 0xFF, 0xC1, 0xFF, 0xF1, 0xE0, 0x78, 0x00, 0xE0, 0x1E, 0x73, 0xC0, 0x1C, 0xE0, 0x00, 0x38, 0x07, 0x0F, 0x00, 0x03, 0xC3, 0xC0, 0x03, 0x80, 0x39, 0xCF, 0x80, 0x73, 0x80, 0x00, 0xE0, 0x1C, 0x78, 0x00, 0x07, 0x9E, 0x00, 0x0E, 0x00, 0x07, 0x3F, 0x01, 0xCE, 0x00, 0x03, 0x80, 0x71, 0xC0, 0x00, 0x0F, 0xF0, 0x00, 0x3F, 0xF8, 0x1C, 0xFF, 0x07, 0x3F, 0xFE, 0x0F, 0xFF, 0xCE, 0x00, 0x00, 0x3F, 0x80, 0x00, 0x7F, 0xF8, 0x73, 0xBE, 0x1C, 0xFF, 0xF8, 0x3F, 0xFE, 0x38, 0x00, 0x00, 0x7E, 0x00, 0x00, 0xFF, 0xF1, 0xCE, 0x7C, 0x73, 0xFF, 0xE0, 0xFF, 0xF0, 0xE0, 0xFF, 0x00, 0xF0, 0x00, 0x00, 0x01, 0xE7, 0x38, 0x7D, 0xCE, 0x00, 0x03, 0x87, 0x83, 0x83, 0xFC, 0x03, 0xC0, 0x00, 0x00, 0x03, 0x9C, 0xE0, 0xFF, 0x38, 0x00, 0x0E, 0x0E, 0x0E, 0x0F, 0xF0, 0x0F, 0x00, 0x00, 0xC0, 0x0E, 0x73, 0x81, 0xFC, 0xE0, 0x00, 0x38, 0x3C, 0x3C, 0x01, 0xC0, 0x3C, 0x00, 0x03, 0x80, 0x39, 0xCE, 0x01, 0xF3, 0x80, 0x00, 0xE0, 0x70, 0x78, 0x07, 0x00, 0xF0, 0x00, 0x0F, 0x01, 0xE7, 0x38, 0x03, 0xCE, 0x00, 0x03, 0x80, 0xE0, 0xF0, 0x1C, 0x03, 0xC0, 0x00, 0x1F, 0xFF, 0x1C, 0xE0, 0x07, 0x3F, 0xFF, 0xCE, 0x03, 0x81, 0xFF, 0xF0, 0x0F, 0x00, 0x00, 0x3F, 0xF8, 0x73, 0x80, 0x04, 0x3F, 0xFF, 0x38, 0x07, 0x03, 0xFF, 0xC0, 0x3C, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x3F, 0xFF, 0x9C, 0xFF, 0xFF, 0x3F, 0xFF, 0xCF, 0xFF, 0xCF, 0xFF, 0xF3, 0xFF, 0xFC};
+	�
